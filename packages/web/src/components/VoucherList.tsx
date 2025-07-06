@@ -1,4 +1,4 @@
-import type { Voucher } from "@prisma/client"
+import type { Voucher } from "@voucher-ping/db"
 import { useState, useEffect } from "react"
 import { fetchVouchersFromSQLite } from "../services/sqlite"
 

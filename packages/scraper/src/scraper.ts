@@ -1,5 +1,4 @@
-import type { VoucherToBeAdded } from "@voucher-ping/db"
-import type { Voucher } from "@prisma/client"
+import type { VoucherToBeAdded, Voucher } from "@voucher-ping/db"
 import { addVoucher, getVouchers, updateLastScraperRun } from "@voucher-ping/db"
 import { scraperVouchersGov } from "./scrapers/vouchers-gov"
 import { scraperDigitalsmeGov } from "./scrapers/digitalsme-gov"

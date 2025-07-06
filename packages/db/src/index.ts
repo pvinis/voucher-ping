@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
-import type { Voucher } from "@prisma/client"
+import type { Voucher, Subscriber, Metadata } from "@prisma/client"
+export type { Voucher, Subscriber, Metadata } from "@prisma/client"
 
 const prisma = new PrismaClient()
 

@@ -1,5 +1,5 @@
 import initSqlJs from "sql.js"
-import type { Voucher } from "@prisma/client"
+import type { Voucher } from "@voucher-ping/db"
 
 let SQL: any = null
 let dbInstance: any = null
