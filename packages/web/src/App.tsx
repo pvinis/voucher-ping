@@ -1,6 +1,7 @@
 import { useState } from "react"
 import SubscribeForm from "./components/SubscribeForm"
 import VoucherList from "./components/VoucherList"
+import LastChecked from "./components/LastChecked"
 
 function App() {
 	const [subscribed, setSubscribed] = useState(false)
@@ -57,7 +58,10 @@ function App() {
 					)}
 
 					<div className="mt-12">
-						<h2 className="text-2xl font-semibold mb-6">Latest Vouchers</h2>
+						<div className="flex items-center justify-between mb-6">
+							<h2 className="text-2xl font-semibold">Latest Vouchers</h2>
+							<LastChecked />
+						</div>
 						<VoucherList />
 					</div>
 				</div>
