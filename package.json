@@ -1,7 +1,6 @@
 {
 	"name": "voucher-ping",
 	"type": "module",
-	"private": true,
 	"workspaces": [
 		"packages/*"
 	],

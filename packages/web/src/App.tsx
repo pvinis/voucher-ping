@@ -11,7 +11,8 @@ function App() {
 		try {
 			// For this demo, we'll just simulate a successful subscription
 			// In a real app, you would call an API endpoint here
-			console.log(`Subscribing email: ${subscribedEmail}`);
+			console.log(`Subscribing email: ${subscribedEmail}`)
+			////
 
 			// Simulate API call
 			await new Promise((resolve) => setTimeout(resolve, 500))
@@ -65,17 +66,6 @@ function App() {
 			<footer className="bg-gray-100 py-6">
 				<div className="container mx-auto px-4 text-center text-gray-500">
 					<p>© {new Date().getFullYear()} Voucher Ping. All rights reserved.</p>
-					<p className="mt-1 text-sm">
-						Data sourced from{" "}
-						<a
-							href="https://vouchers.gov.gr"
-							className="underline hover:text-indigo-600"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							vouchers.gov.gr
-						</a>
-					</p>
 				</div>
 			</footer>
 		</div>
