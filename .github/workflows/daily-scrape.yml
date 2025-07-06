@@ -38,5 +38,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update voucher database"
+            git pull --rebase
             git push
           fi
