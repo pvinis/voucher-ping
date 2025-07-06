@@ -19,13 +19,13 @@ export type Subscriber = {
 export type Schema = {
 	vouchers: Voucher[] // all discovered vouchers
 	subscribers: Subscriber[] // all email subscribers
-	lastChecked: string // last time we ran the scraper
+	lastChanged: string // last time there were changed in the db
 	migrationVersion: number // latest completed migration version
 }
 
 export const defaultData: Schema = {
 	vouchers: [],
 	subscribers: [],
-	lastChecked: new Date().toISOString(),
+	lastChanged: new Date().toISOString(),
 	migrationVersion: getLatestMigrationVersion(), // default to latest migration
 }

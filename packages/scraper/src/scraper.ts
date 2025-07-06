@@ -1,8 +1,8 @@
-import type { Voucher } from "@voucher-ping/db"
-import { addVoucher, getVouchers, updateLastChecked } from "@voucher-ping/db"
+import type { VoucherToBeAdded } from "@voucher-ping/db"
+import { addVoucher, getVouchers, updateLastChanged } from "@voucher-ping/db"
 import { scraperVouchersGov } from "./scrapers/vouchers-gov"
 import { scraperDigitalsmeGov } from "./scrapers/digitalsme-gov"
-import type { ScrapedVoucher } from "./scrapers/shared"
+import type { ScrapedVoucher, Voucher } from "./scrapers/shared"
 
 const URLS_TO_SCRAPE = {
 	"https://vouchers.gov.gr": {
@@ -52,12 +52,16 @@ export async function processScrapedVouchers(
 		}
 
 		console.log(`Adding new voucher: ${voucher.title}`)
-		const fullVoucher: Voucher = { ...voucher, sourceId, tags }
+		const fullVoucher: VoucherToBeAdded = {
+			...voucher,
+			sourceId,
+			tags,
+		}
 		const addedVoucher = await addVoucher(fullVoucher)
 		newVouchers.push(addedVoucher)
 	}
 
-	await updateLastChecked()
+	await updateLastChanged()
 
 	return newVouchers
 }

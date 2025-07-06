@@ -26,7 +26,9 @@ export async function getDatabase(): Promise<Low<Schema>> {
 	return db
 }
 
-export async function addVoucher(voucher: Omit<Voucher, "id" | "discoveredAt">): Promise<Voucher> {
+export type VoucherToBeAdded = Omit<Voucher, "id" | "discoveredAt">
+
+export async function addVoucher(voucher: VoucherToBeAdded): Promise<Voucher> {
 	const db = await getDatabase()
 
 	const existingVoucher = db.data.vouchers.find((v) => v.url === voucher.url)
@@ -50,8 +52,8 @@ export async function getVouchers(): Promise<Voucher[]> {
 	return db.data.vouchers
 }
 
-export async function updateLastChecked(): Promise<void> {
-	await db.update(({ lastChecked }) => (lastChecked = new Date().toISOString()))
+export async function updateLastChanged(): Promise<void> {
+	await db.update(({ lastChanged }) => (lastChanged = new Date().toISOString()))
 }
 
 export async function getSubscribers(): Promise<any[]> {
