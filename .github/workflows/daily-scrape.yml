@@ -2,7 +2,7 @@ name: Daily Voucher Scrape
 
 on:
   schedule:
-    - cron: "0 8 * * *" # Run daily at 8 AM UTC
+    - cron: "0 8 * * *" # Run daily at 8am UTC
   workflow_dispatch: # Allow manual trigger
 
 jobs:
