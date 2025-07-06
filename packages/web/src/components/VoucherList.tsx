@@ -1,22 +1,9 @@
 import type { Voucher } from "@voucher-ping/db"
 import { useState, useEffect } from "react"
+import { fetchVouchersFromSQLite } from "../services/sqlite"
 
 export async function fetchVouchers(): Promise<Voucher[]> {
-	try {
-		const response = await fetch(
-			"https://raw.githubusercontent.com/pvinis/voucher-ping/main/packages/db/data/db.json",
-		)
-
-		if (!response.ok) {
-			throw new Error(`Failed to fetch vouchers: ${response.status} ${response.statusText}`)
-		}
-
-		const data = await response.json()
-		return data.vouchers || []
-	} catch (error) {
-		console.error("Error fetching vouchers from GitHub:", error)
-		throw error
-	}
+	return await fetchVouchersFromSQLite()
 }
 
 const VoucherList = () => {
@@ -35,7 +22,7 @@ const VoucherList = () => {
 			} catch (err) {
 				console.error("Error fetching vouchers:", err)
 				setError(
-					"Failed to load vouchers from GitHub. Please check your internet connection and try again later.",
+					"Failed to load vouchers from database. Please check your internet connection and try again later.",
 				)
 			} finally {
 				setLoading(false)
