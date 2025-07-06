@@ -124,8 +124,8 @@ The build process automatically:
 
 ### Build Dependencies
 - Web package includes `@prisma/client` and `prisma` as dependencies
-- Build script: `cd ../db && bunx prisma generate && cd ../web && tsc && vite build`
-- Root build script generates Prisma types before building web package
+- Web package uses `prebuild` script: `cd ../db && bunx prisma generate`
+- Build script: `tsc && vite build` (prebuild runs automatically before build)
 
 ### Important Build Notes
 - Always run `prisma generate` before TypeScript compilation
