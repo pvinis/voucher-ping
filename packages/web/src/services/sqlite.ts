@@ -1,5 +1,5 @@
 import initSqlJs from "sql.js"
-import type { Voucher } from "@voucher-ping/db"
+import type { Voucher, Metadata } from "@voucher-ping/db"
 
 let SQL: any = null
 
@@ -59,5 +59,36 @@ export async function fetchVouchersFromSQLite(): Promise<Voucher[]> {
 	} catch (error) {
 		console.error("Error fetching vouchers from SQLite:", error)
 		throw error
+	}
+}
+
+export async function fetchLastScraperRun(): Promise<string | null> {
+	try {
+		const SQL = await initSQL()
+
+		const response = await fetch(
+			"https://raw.githubusercontent.com/pvinis/voucher-ping/main/packages/db/data/db.sqlite",
+		)
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`)
+		}
+
+		const buffer = await response.arrayBuffer()
+		const db = new SQL.Database(new Uint8Array(buffer))
+
+		const result = db.exec("SELECT lastRunAt FROM Metadata WHERE id = 'singleton'")
+
+		if (result.length === 0 || result[0].values.length === 0) {
+			db.close()
+			return null
+		}
+
+		const lastRunAt = result[0].values[0][0] as string
+		db.close()
+		return lastRunAt
+	} catch (error) {
+		console.error("Error fetching last scraper run from SQLite:", error)
+		return null
 	}
 }
