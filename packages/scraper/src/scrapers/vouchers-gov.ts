@@ -2,7 +2,7 @@ import type { Page } from "playwright"
 import { ScrapedVoucher, setupBrowser, type Scraper } from "./shared"
 
 export const scraperVouchersGov: Scraper = {
-	scrape: async function (url: string): Promise<ScrapedVoucher[]> {
+	async scrape(url: string): Promise<ScrapedVoucher[]> {
 		console.log(`Starting to scrape ${url}...`)
 
 		const browser = await setupBrowser()
