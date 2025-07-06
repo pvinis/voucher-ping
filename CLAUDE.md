@@ -28,6 +28,12 @@ Voucher Ping is a monorepo system that scrapes Greek government voucher websites
 - `bun --cwd packages/db prisma migrate dev` - Create and apply new migration
 - `bun --cwd packages/db prisma studio` - Open Prisma Studio for database inspection
 
+### TypeScript Commands
+- `bunx tsc --noEmit` - Type check all packages without emitting files
+- `cd packages/web && bunx tsc --noEmit` - Type check web package only
+- `cd packages/scraper && bunx tsc --noEmit` - Type check scraper package only
+- `cd packages/db && bunx tsc --noEmit` - Type check db package only
+
 ## Architecture
 
 ### Database Layer (`@voucher-ping/db`)
@@ -71,7 +77,8 @@ Voucher Ping is a monorepo system that scrapes Greek government voucher websites
 ### Database Schema Changes
 - **Migrations**: Use `bun --cwd packages/db prisma migrate dev --name "description"`
 - **Schema**: Edit `packages/db/prisma/schema.prisma`
-- **Type Safety**: Prisma generates TypeScript types in `packages/db/generated/prisma`
+- **Type Safety**: Prisma generates TypeScript types in `node_modules/@prisma/client`
+- **Regenerate Types**: Use `bunx prisma generate` after schema changes
 
 ### Email Notifications
 - **Provider**: Resend API

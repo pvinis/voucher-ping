@@ -1,5 +1,5 @@
 import { Resend } from "resend"
-import type { Voucher } from "@voucher-ping/db"
+import type { Voucher } from "@prisma/client"
 import { getSubscribers } from "@voucher-ping/db"
 
 // Initialize Resend client
