@@ -5,12 +5,16 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"build": "tsc",
-		"start": "bun src/index.ts"
+		"start": "bun src/index.ts",
+		"db:migrate": "prisma migrate dev && prisma generate"
 	},
 	"dependencies": {
-		"lowdb": "^7.0.1"
+		"@prisma/client": "^6.11.1"
 	},
 	"devDependencies": {
-		"typescript": "^5.8.2"
+		"@types/node": "^24.0.10",
+		"prisma": "^6.11.1",
+		"tsx": "^4.20.3",
+		"typescript": "^5.8.3"
 	}
 }

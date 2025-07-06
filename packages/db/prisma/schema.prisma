@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/db.sqlite"
+}
+
+model Voucher {
+  id           Int      @id @default(autoincrement()) // unique identifier
+  title        String // voucher title/description
+  url          String   @unique // link to the voucher page
+  imageUrl     String // image URL from the website
+  discoveredAt DateTime @default(now()) // when the voucher was discovered
+}
