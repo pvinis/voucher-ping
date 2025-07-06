@@ -70,6 +70,17 @@ function App() {
 			<footer className="bg-gray-100 py-6">
 				<div className="container mx-auto px-4 text-center text-gray-500">
 					<p>© {new Date().getFullYear()} Voucher Ping. All rights reserved.</p>
+					<p className="mt-2">
+						Made by <span className="font-medium">Pavlos Vinieratos</span> • For hire:{" "}
+						<a 
+							href="https://quad.codes" 
+							className="text-indigo-600 hover:text-indigo-800 underline"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							quad.codes
+						</a>
+					</p>
 				</div>
 			</footer>
 		</div>
