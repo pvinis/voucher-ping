@@ -8,7 +8,8 @@
 		"dev": "bun run --cwd packages/web dev",
 		"build": "bun run --cwd packages/web build",
 		"scrape": "bun run --cwd packages/scraper start",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"db:migrate": "bun --cwd packages/db db:migrate"
 	},
 	"devDependencies": {
 		"@types/bun": "1.2.18",

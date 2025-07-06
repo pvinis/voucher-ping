@@ -18,6 +18,12 @@ model Voucher {
   tags         Json // tags like `personal`, `work` etc
 }
 
+model Subscriber {
+  id           String @id @default(uuid()) // unique identifier
+  email        String
+  subscribedAt String // ISO timestamp when subscriber was added
+}
+
 model Metadata {
   id        String @id @default("singleton") // singleton pattern
   lastRunAt String // ISO timestamp of last scraper run

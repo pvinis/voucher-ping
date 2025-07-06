@@ -20,6 +20,7 @@ export async function addVoucher(voucher: VoucherToBeAdded): Promise<Voucher> {
 		data: {
 			...voucher,
 			discoveredAt: new Date().toISOString(),
+			tags: voucher.tags,
 		},
 	})
 }
@@ -33,4 +34,24 @@ export async function getVouchers(): Promise<Voucher[]> {
 export async function getSubscribers(): Promise<{ email: string }[]> {
 	// TODO: Implement subscribers functionality when User model is added
 	return []
+}
+
+export async function getLastScraperRun(): Promise<Date | null> {
+	const metadata = await prisma.metadata.findFirst()
+	return metadata ? new Date(metadata.lastRunAt) : null
+}
+
+export async function updateLastScraperRun(): Promise<void> {
+	const now = new Date().toISOString()
+
+	await prisma.metadata.upsert({
+		where: { id: "singleton" },
+		create: {
+			id: "singleton",
+			lastRunAt: now,
+		},
+		update: {
+			lastRunAt: now,
+		},
+	})
 }

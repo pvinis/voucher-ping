@@ -4,50 +4,79 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Voucher Ping is a monorepo system that scrapes voucher websites for new vouchers and sends email notifications to subscribers. The system consists of three main packages:
+Voucher Ping is a monorepo system that scrapes Greek government voucher websites for new vouchers and sends email notifications to subscribers. The system consists of three main packages:
 
-- `@voucher-ping/db`: JSON-based database using LowDB for storing vouchers and metadata
-- `@voucher-ping/scraper`: Web scraper using Playwright to extract voucher data from gov.gr
+- `@voucher-ping/db`: Database layer using Prisma with SQLite for storing vouchers, subscribers, and metadata
+- `@voucher-ping/scraper`: Web scraper using Playwright to extract voucher data from gov.gr domains
 - `@voucher-ping/web`: React frontend for displaying vouchers and handling subscriptions
 
 ## Development Commands
 
 ### Root Level Commands
 - `bun dev` - Start the web development server
-- `bun build` - Build the web application for production
+- `bun build` - Build the web application and run TypeScript compilation
 - `bun scrape` - Run the voucher scraper
 - `bun format` - Format code with Prettier
 
 ### Package-Specific Commands
-- Web: `bun run --cwd packages/web dev|build|preview`
-- Scraper: `bun run --cwd packages/scraper build|start`
-- DB: `bun run --cwd packages/db build|start`
+- Web: `bun --cwd packages/web dev|build|preview`
+- Scraper: `bun --cwd packages/scraper build|start`
+- DB: `bun --cwd packages/db build|start|db:migrate`
+
+### Database Commands
+- `bun --cwd packages/db db:migrate` - Run Prisma migrations and generate client
+- `bun --cwd packages/db prisma migrate dev` - Create and apply new migration
+- `bun --cwd packages/db prisma studio` - Open Prisma Studio for database inspection
 
 ## Architecture
 
-The system follows a simple data flow:
+### Database Layer (`@voucher-ping/db`)
+- **Technology**: Prisma ORM with SQLite database
+- **Location**: `packages/db/data/db.sqlite`
+- **Schema**: Defined in `packages/db/prisma/schema.prisma`
+- **Models**:
+  - `Voucher`: Stores voucher data with sourceId and tags for categorization
+  - `Subscriber`: Email subscribers for notifications
+  - `Metadata`: Singleton pattern for scraper run timestamps
 
-1. **Scraper** (`packages/scraper/src/index.ts`) orchestrates the process:
-   - Scrapes vouchers from configured URLs (currently vouchers.gov.gr)
-   - Compares with existing vouchers in the database
-   - Sends email notifications for new vouchers via Resend API
+### Data Flow Architecture
+1. **Scraper** (`packages/scraper/src/scraper.ts`) orchestrates the process:
+   - Iterates through configured URL sources in `URLS_TO_SCRAPE`
+   - Each source has a dedicated scraper, sourceId, and tags
+   - Compares with existing vouchers in database to find new ones
+   - Adds new vouchers with appropriate sourceId and tags
+   - Sends email notifications via Resend API
 
-2. **Database** (`packages/db/src/index.ts`) provides:
-   - JSON file storage in `packages/db/data/db.json`
-   - Voucher schema with id, title, url, imageUrl, discoveredAt
-   - Functions: `addVoucher()`, `getVouchers()`, `updateLastChecked()`
+2. **Source Classification**:
+   - `vouchers.gov.gr` → sourceId: "vouchers-gov", tags: ["personal"]
+   - `digitalsme.gov.gr` → sourceId: "digitalsme-gov", tags: ["work"]
 
-3. **Web Frontend** (`packages/web/src/App.tsx`) displays:
-   - Subscription form for email notifications
-   - Latest vouchers list
-   - React with Tailwind CSS styling
+3. **Scraper Architecture**:
+   - Individual scrapers implement the `Scraper` interface
+   - Each scraper handles site-specific DOM extraction logic
+   - Shared utilities in `packages/scraper/src/scrapers/shared.ts`
+
+### Web Frontend (`@voucher-ping/web`)
+- **Technology**: React with Vite and Tailwind CSS
+- **Data Source**: Fetches voucher data from GitHub repository's raw JSON (not direct database access)
+- **Features**: Subscription form and voucher display
 
 ## Key Configuration
 
-- **Scraper URLs**: Edit `URLS_TO_SCRAPE` array in `packages/scraper/src/index.ts`
-- **Email Notifications**: Requires `RESEND_API_KEY` environment variable
-- **Database**: Auto-creates `packages/db/data/db.json` on first run
-- **Automation**: GitHub Actions workflow runs daily at 8 AM UTC
+### Scraper Configuration
+- **URLs**: Edit `URLS_TO_SCRAPE` object in `packages/scraper/src/scraper.ts`
+- **Source Mapping**: Each URL entry includes scraper function, sourceId, and tags
+- **Adding New Sources**: Create new scraper in `packages/scraper/src/scrapers/`, add to `URLS_TO_SCRAPE`
+
+### Database Schema Changes
+- **Migrations**: Use `bun --cwd packages/db prisma migrate dev --name "description"`
+- **Schema**: Edit `packages/db/prisma/schema.prisma`
+- **Type Safety**: Prisma generates TypeScript types in `packages/db/generated/prisma`
+
+### Email Notifications
+- **Provider**: Resend API
+- **Configuration**: Requires `RESEND_API_KEY` environment variable
+- **Fallback**: Mock notifications when API key is missing
 
 ## Environment Variables
 
@@ -56,3 +85,21 @@ The system follows a simple data flow:
 ## Package Manager
 
 This project uses Bun as the package manager and runtime. All scripts can be run with `bun` instead of `bun run`.
+
+## Important Development Notes
+
+### Database Migrations
+- Always test migrations with existing data
+- Use `--create-only` flag for complex migrations that require manual SQL editing
+- Ensure sourceId and tags are properly set for new vouchers
+
+### Scraper Development
+- Each scraper must implement the `Scraper` interface from `shared.ts`
+- Test scrapers individually before adding to `URLS_TO_SCRAPE`
+- Handle dynamic content loading (lazy loading, infinite scroll)
+- Use proper error handling and browser cleanup
+
+### Type Safety
+- Database types are auto-generated by Prisma
+- `VoucherToBeAdded` type omits auto-generated fields (id, discoveredAt)
+- Scrapers return `ScrapedVoucher[]` which gets enhanced with sourceId and tags
