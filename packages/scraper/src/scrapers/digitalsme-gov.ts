@@ -2,7 +2,7 @@ import type { Page } from "playwright"
 import { setupBrowser, type ScrapedVoucher, type Scraper } from "./shared"
 
 export const scraperDigitalsmeGov: Scraper = {
-	async scrape(url: string, sourceId: string, tags: string[]): Promise<ScrapedVoucher[]> {
+	async scrape(url: string): Promise<ScrapedVoucher[]> {
 		console.log(`Starting to scrape ${url}...`)
 
 		const browser = await setupBrowser()
@@ -12,7 +12,7 @@ export const scraperDigitalsmeGov: Scraper = {
 			await page.goto(url, { waitUntil: "domcontentloaded" })
 			console.log("Page loaded successfully")
 
-			const vouchers = await extractVouchers(page, sourceId, tags)
+			const vouchers = await extractVouchers(page)
 			console.log(`Found ${vouchers.length} vouchers on the page`)
 
 			return vouchers
@@ -26,11 +26,7 @@ export const scraperDigitalsmeGov: Scraper = {
 	},
 }
 
-async function extractVouchers(
-	page: Page,
-	sourceId: string,
-	tags: string[],
-): Promise<ScrapedVoucher[]> {
+async function extractVouchers(page: Page): Promise<ScrapedVoucher[]> {
 	return await page.evaluate(() => {
 		const vouchers: Array<ScrapedVoucher> = []
 
@@ -75,7 +71,7 @@ async function extractVouchers(
 			}
 
 			console.log(`Found announcement: ${title} - ${url}`)
-			vouchers.push({ title, url, imageUrl, sourceId, tags })
+			vouchers.push({ title, url, imageUrl })
 		})
 
 		return vouchers

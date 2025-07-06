@@ -1,15 +1,19 @@
 import { chromium } from "playwright"
 
-export interface ScrapedVoucher {
+export type ScrapedVoucher = {
 	title: string
 	url: string
 	imageUrl: string
+}
+export type ExtractedVoucher = {
 	sourceId: string
 	tags: string[]
 }
 
+export type Voucher = ScrapedVoucher & ExtractedVoucher
+
 export type Scraper = {
-	scrape(url: string, sourceId: string, tags: string[]): Promise<ScrapedVoucher[]>
+	scrape(url: string): Promise<ScrapedVoucher[]>
 }
 
 export async function setupBrowser() {

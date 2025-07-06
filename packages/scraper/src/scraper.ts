@@ -23,7 +23,7 @@ export async function scrape(): Promise<Voucher[]> {
 	for (const [url, config] of Object.entries(URLS_TO_SCRAPE)) {
 		console.log(`\nProcessing URL: ${url}`)
 
-		const scrapedVouchers = await config.scraper.scrape(url, config.sourceId, config.tags)
+		const scrapedVouchers = await config.scraper.scrape(url)
 		console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
 
 		const newVouchers = await processScrapedVouchers(scrapedVouchers)
