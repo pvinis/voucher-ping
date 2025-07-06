@@ -14,7 +14,7 @@
 		"sql.js": "^1.13.0"
 	},
 	"devDependencies": {
-		"@tailwindcss/vite": "4.0.17",
+		"@tailwindcss/vite": "4.1.11",
 		"@types/react": "^18.3.18",
 		"@types/react-dom": "^18.3.5",
 		"@types/sql.js": "^1.4.9",
