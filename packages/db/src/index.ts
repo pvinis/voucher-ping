@@ -1,5 +1,5 @@
 import { PrismaClient } from "../generated/prisma"
-import type { Voucher, Metadata } from "../generated/prisma"
+import type { Voucher } from "../generated/prisma"
 
 export type { Voucher, Metadata } from "../generated/prisma"
 
@@ -20,7 +20,7 @@ export async function addVoucher(voucher: VoucherToBeAdded): Promise<Voucher> {
 		data: {
 			...voucher,
 			discoveredAt: new Date().toISOString(),
-			tags: voucher.tags,
+			tags: voucher.tags as string[],
 		},
 	})
 }
