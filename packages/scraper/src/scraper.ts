@@ -1,110 +1,32 @@
-import { chromium, type Page } from "playwright"
 import type { Voucher } from "@voucher-ping/db"
 import { addVoucher, getVouchers, updateLastChecked } from "@voucher-ping/db"
+import { scraperVouchersGov } from "./scrapers/vouchers-gov"
+// import { scrapeDigitalsmeGov } from "./scrapers/digitalsme-gov"
+import type { ScrapedVoucher } from "./scrapers/shared"
 
-// Interface for scraped voucher without ID and discoveredAt
-interface ScrapedVoucher {
-	title: string
-	url: string
-	imageUrl: string
+const URLS_TO_SCRAPE = {
+	"https://vouchers.gov.gr": scraperVouchersGov,
+	// "https://digitalsme.gov.gr/νέα-ανακοινώσεις": scrapeDigitalsmeGov,
 }
 
-/**
- * Scrapes vouchers from the specified URL
- */
-export async function scrapeVouchers(url: string): Promise<ScrapedVoucher[]> {
-	console.log(`Starting to scrape ${url}...`)
+export async function scrape(): Promise<Voucher[]> {
+	const allNewVouchers: Voucher[] = []
 
-	// Launch browser
-	const browser = await chromium.launch({ headless: true })
-	const page = await browser.newPage()
+	for (const [url, scraper] of Object.entries(URLS_TO_SCRAPE)) {
+		console.log(`\nProcessing URL: ${url}`)
 
-	try {
-		// Navigate to the page
-		await page.goto(url, { waitUntil: "domcontentloaded" })
-		console.log("Page loaded successfully")
+		const scrapedVouchers = await scraper.scrape(url)
+		console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
 
-		// Extract vouchers
-		const vouchers = await extractVouchers(page)
-		console.log(`Found ${vouchers.length} vouchers on the page`)
+		const newVouchers = await processScrapedVouchers(scrapedVouchers)
+		console.log(`Found ${newVouchers.length} new vouchers`)
 
-		return vouchers
-	} catch (error) {
-		console.error("Error during scraping:", error)
-		return []
-	} finally {
-		// Close browser
-		await browser.close()
-		console.log("Browser closed")
+		allNewVouchers.push(...newVouchers)
 	}
+
+	return allNewVouchers
 }
 
-/**
- * Extracts vouchers from the page
- */
-async function extractVouchers(page: Page): Promise<ScrapedVoucher[]> {
-	// This is specific to vouchers.gov.gr - we need to find the voucher elements
-	return await page.evaluate(() => {
-		// Using any types here since we're in the browser context,
-		// and TypeScript's DOM types are not available in this context
-		const vouchers: Array<{
-			title: string
-			url: string
-			imageUrl: string
-		}> = []
-
-		// Target the voucher containers based on the actual site structure
-		const voucherElements = document.querySelectorAll(".views-row")
-		console.log(`Found ${voucherElements.length} voucher elements`)
-
-		voucherElements.forEach((element) => {
-			// Get the link from the promo text section
-			const linkElement = element.querySelector(".views-field-field-promo-text a") as any
-			if (!linkElement) return
-
-			const url = linkElement.href
-			if (!url) return
-
-			// Get the image from the banner image section
-			const imageElement = element.querySelector(".views-field-field-banner-image img") as any
-			if (!imageElement) return
-
-			const imageUrl = imageElement.src
-			if (!imageUrl) return
-
-			// Get title - use the first few words of the text or the URL path
-			let title = ""
-			const textContent = linkElement.textContent?.trim()
-
-			if (textContent) {
-				// Use first 6 words as title
-				const words = textContent.split(/\s+/)
-				title = words.slice(0, 6).join(" ") + (words.length > 6 ? "..." : "")
-			} else if (imageElement.alt) {
-				// Fallback to image alt text
-				title = imageElement.alt
-			} else {
-				// Second fallback: use the URL path as title
-				try {
-					const urlPath = new URL(url).pathname
-					title = urlPath.split("/").pop() || urlPath
-				} catch {
-					title = "Unnamed Voucher"
-				}
-			}
-
-			console.log(`Found voucher: ${title} - ${url}`)
-			vouchers.push({ title, url, imageUrl })
-		})
-
-		return vouchers
-	})
-}
-
-/**
- * Processes the scraped vouchers by comparing with existing ones
- * and returning only the new ones
- */
 export async function processScrapedVouchers(
 	scrapedVouchers: ScrapedVoucher[],
 ): Promise<Voucher[]> {
@@ -112,7 +34,6 @@ export async function processScrapedVouchers(
 	const existingVouchers = await getVouchers()
 	const existingUrls = new Set(existingVouchers.map((v) => v.url))
 
-	// Find new vouchers
 	const newVouchers: Voucher[] = []
 
 	for (const voucher of scrapedVouchers) {

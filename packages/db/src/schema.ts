@@ -1,26 +1,22 @@
-/**
- * Schema definitions for the Voucher Ping application
- */
-
 export type Voucher = {
-	id: string; // Unique identifier
-	title: string; // Voucher title/description
-	url: string; // Link to the voucher page
-	imageUrl: string; // Image URL from the website
-	discoveredAt: string; // ISO timestamp when we found this voucher
-};
+	id: string // unique identifier
+	title: string // voucher title/description
+	url: string // link to the voucher page
+	imageUrl: string // image URL from the website
+	discoveredAt: string // ISO timestamp when voucher was found
+}
 
 export type Subscriber = {
-	id: string
+	id: string // unique identifier
 	email: string
-	subscribedAt: string
+	subscribedAt: string // ISO timestamp when subscriber was added
 }
 
 export type Schema = {
-	vouchers: Voucher[]; // All discovered vouchers
-	subscribers: Subscriber[]; // All email subscribers
-	lastChecked: string; // Last time we ran the scraper
-};
+	vouchers: Voucher[] // all discovered vouchers
+	subscribers: Subscriber[] // all email subscribers
+	lastChecked: string // last time we ran the scraper
+}
 
 export const defaultData: Schema = {
 	vouchers: [],
