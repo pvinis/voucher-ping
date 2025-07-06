@@ -15,11 +15,25 @@ A system that periodically scrapes voucher websites for new vouchers and sends e
 
 This is a monorepo with the following packages:
 
-- `packages/db`: Database layer using LowDB for storing vouchers and subscribers
+- `packages/db`: Database layer using Prisma ORM with SQLite for storing vouchers and subscribers
 - `packages/scraper`: Playwright-based scraper that checks websites for new vouchers
 - `packages/web`: React frontend for user subscription
 
-3. Set up environment variables
+## Getting Started
+
+### Installation
+
+```bash
+bun install
+```
+
+### Database Setup
+
+```bash
+bun db:migrate
+```
+
+### Environment Variables
 
 ```bash
 # For email sending (optional during development)
@@ -53,11 +67,9 @@ To enable email notifications in GitHub Actions:
 
 ### Scraper
 
-The scraper is configured to check the following URLs:
+The scraper is configured to check the following URLs: [packages/scraper/src/scraper.ts](packages/scraper/src/scraper.ts)
 
-- <https://vouchers.gov.gr>
-
-To modify the list of URLs to scrape, edit the `URLS_TO_SCRAPE` array in `packages/scraper/src/index.ts`.
+To modify the list of URLs to scrape, edit the `URLS_TO_SCRAPE` object in `packages/scraper/src/scraper.ts`.
 
 ### Email Notifications
 
@@ -72,3 +84,19 @@ The web UI is a simple React application that allows users to subscribe to email
 1. Edit the components in `packages/web/src/components/`
 2. Modify the styles in `packages/web/src/index.css`
 
+## Database
+
+The project uses Prisma ORM with SQLite for data persistence. The database file is located at `packages/db/data/db.sqlite`.
+
+### Database Commands
+
+```bash
+# Run migrations and generate Prisma client
+bun db:migrate
+
+# Open Prisma Studio for database inspection
+bun --cwd packages/db prisma studio
+
+# Create a new migration
+bun --cwd packages/db prisma migrate dev
+```
