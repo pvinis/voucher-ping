@@ -3,24 +3,9 @@ import { Migration } from "./types"
 import { Schema } from "../schema"
 
 export const migration001AddSourceIdAndTags: Migration = {
-	id: "001",
+	version: 1,
 	name: "Add sourceId and tags to existing vouchers",
 	up: async (db: Low<Schema>) => {
-		let needsMigration = false
-
-		for (const voucher of db.data.vouchers) {
-			if (!voucher.sourceId || !voucher.tags) {
-				needsMigration = true
-				break
-			}
-		}
-
-		if (!needsMigration) {
-			return
-		}
-
-		console.log("Running migration 001: Add sourceId and tags to existing vouchers...")
-
 		await db.update((data) => {
 			for (const voucher of data.vouchers) {
 				if (voucher.sourceId && voucher.tags) continue

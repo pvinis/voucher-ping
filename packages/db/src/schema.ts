@@ -1,3 +1,5 @@
+import { getLatestMigrationVersion } from "./migrations"
+
 export type Voucher = {
 	id: string // unique identifier
 	title: string // voucher title/description
@@ -18,10 +20,12 @@ export type Schema = {
 	vouchers: Voucher[] // all discovered vouchers
 	subscribers: Subscriber[] // all email subscribers
 	lastChecked: string // last time we ran the scraper
+	migrationVersion: number // latest completed migration version
 }
 
 export const defaultData: Schema = {
 	vouchers: [],
 	subscribers: [],
 	lastChecked: new Date().toISOString(),
+	migrationVersion: getLatestMigrationVersion(), // default to latest migration
 }
