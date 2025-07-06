@@ -1,5 +1,5 @@
 import initSqlJs from "sql.js"
-import type { Voucher, Metadata } from "@voucher-ping/db"
+import type { Voucher } from "@voucher-ping/db"
 
 let SQL: any = null
 let dbInstance: any = null

@@ -1,7 +1,5 @@
-import { PrismaClient } from "../generated/prisma"
-import type { Voucher } from "../generated/prisma"
-
-export type { Voucher, Metadata } from "../generated/prisma"
+import { PrismaClient } from "@prisma/client"
+import type { Voucher } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
