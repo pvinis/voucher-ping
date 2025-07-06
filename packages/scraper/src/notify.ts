@@ -1,17 +1,17 @@
-import { Resend } from "resend";
-import type { Voucher } from "@voucher-ping/db";
-import { getSubscribers } from "@voucher-ping/db";
+import { Resend } from "resend"
+import type { Voucher } from "@voucher-ping/db"
+import { getSubscribers } from "@voucher-ping/db"
 
 // Initialize Resend client
-const resendApiKey = process.env.RESEND_API_KEY;
-let resend: Resend | null = null;
+const resendApiKey = process.env.RESEND_API_KEY
+let resend: Resend | null = null
 
 if (resendApiKey) {
-	resend = new Resend(resendApiKey);
+	resend = new Resend(resendApiKey)
 } else {
 	console.warn(
 		"RESEND_API_KEY not found in environment variables. Email notifications will be disabled.",
-	);
+	)
 }
 
 /**
@@ -93,16 +93,16 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
             <p>We found ${vouchers.length} new voucher${vouchers.length > 1 ? "s" : ""} that might interest you:</p>
 
             ${vouchers
-				.map(
-					(voucher) => `
+							.map(
+								(voucher) => `
                 <div class="voucher">
                     <img src="${voucher.imageUrl}" alt="${voucher.title}">
                     <div class="voucher-title">${voucher.title}</div>
                     <a href="${voucher.url}" class="voucher-link">View Voucher</a>
                 </div>
             `,
-				)
-				.join("")}
+							)
+							.join("")}
 
             <p>Don't miss out on these opportunities!</p>
         </div>
@@ -112,7 +112,7 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
         </div>
     </body>
     </html>
-    `;
+    `
 }
 
 /**
@@ -120,28 +120,28 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
  */
 export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 	if (!resend) {
-		console.warn("Email notifications disabled: No Resend API key");
-		return;
+		console.warn("Email notifications disabled: No Resend API key")
+		return
 	}
 
 	if (newVouchers.length === 0) {
-		console.log("No new vouchers to notify about");
-		return;
+		console.log("No new vouchers to notify about")
+		return
 	}
 
 	// Get all subscribers
-	const subscribers = await getSubscribers();
+	const subscribers = await getSubscribers()
 	if (subscribers.length === 0) {
-		console.log("No subscribers to notify");
-		return;
+		console.log("No subscribers to notify")
+		return
 	}
 
 	console.log(
 		`Sending notifications to ${subscribers.length} subscribers about ${newVouchers.length} new vouchers`,
-	);
+	)
 
 	// Generate email content
-	const html = generateEmailTemplate(newVouchers);
+	const html = generateEmailTemplate(newVouchers)
 
 	// Send emails
 	const emailPromises = subscribers.map(async (subscriber) => {
@@ -151,40 +151,33 @@ export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 				to: subscriber.email,
 				subject: `${newVouchers.length} New Voucher${newVouchers.length > 1 ? "s" : ""} Available!`,
 				html: html,
-			});
+			})
 
 			if (error) {
-				throw error;
+				throw error
 			}
 
-			console.log(`Email sent to ${subscriber.email}: ${data?.id}`);
-			return { email: subscriber.email, success: true };
+			console.log(`Email sent to ${subscriber.email}: ${data?.id}`)
+			return { email: subscriber.email, success: true }
 		} catch (error) {
-			console.error(
-				`Failed to send email to ${subscriber.email}:`,
-				error,
-			);
-			return { email: subscriber.email, success: false, error };
+			console.error(`Failed to send email to ${subscriber.email}:`, error)
+			return { email: subscriber.email, success: false, error }
 		}
-	});
+	})
 
-	const results = await Promise.all(emailPromises);
-	const successCount = results.filter((r) => r.success).length;
+	const results = await Promise.all(emailPromises)
+	const successCount = results.filter((r) => r.success).length
 
-	console.log(
-		`Email notification summary: ${successCount}/${subscribers.length} sent successfully`,
-	);
+	console.log(`Email notification summary: ${successCount}/${subscribers.length} sent successfully`)
 }
 
 /**
  * For testing: logs notification info without sending emails
  */
 export function mockNotifySubscribers(newVouchers: Voucher[]): void {
-	console.log("MOCK NOTIFICATION");
-	console.log(
-		`Would send notifications about ${newVouchers.length} new vouchers:`,
-	);
+	console.log("MOCK NOTIFICATION")
+	console.log(`Would send notifications about ${newVouchers.length} new vouchers:`)
 	newVouchers.forEach((voucher, i) => {
-		console.log(`${i + 1}. ${voucher.title} - ${voucher.url}`);
-	});
+		console.log(`${i + 1}. ${voucher.title} - ${voucher.url}`)
+	})
 }

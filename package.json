@@ -1,20 +1,20 @@
 {
-    "name": "voucher-ping",
-    "type": "module",
-    "private": true,
-    "workspaces": [
-        "packages/*"
-    ],
-    "scripts": {
-        "dev": "bun run --cwd packages/web dev",
-        "build": "bun run --cwd packages/web build",
-        "scrape": "bun run --cwd packages/scraper start",
-        "format": "prettier --write ."
-    },
-    "devDependencies": {
-        "@types/bun": "latest",
-        "@types/node": "^20.11.30",
-        "prettier": "^3.2.5",
-        "typescript": "^5.4.2"
-    }
+	"name": "voucher-ping",
+	"type": "module",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"dev": "bun run --cwd packages/web dev",
+		"build": "bun run --cwd packages/web build",
+		"scrape": "bun run --cwd packages/scraper start",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@types/bun": "1.2.5",
+		"@types/node": "^22.13.10",
+		"prettier": "^3.5.3",
+		"typescript": "^5.8.2"
+	}
 }

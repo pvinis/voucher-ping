@@ -28,17 +28,17 @@ const MOCK_VOUCHERS = [
 ];
 
 interface Voucher {
-	id: string;
-	title: string;
-	url: string;
-	imageUrl: string;
-	discoveredAt: string;
+	id: string
+	title: string
+	url: string
+	imageUrl: string
+	discoveredAt: string
 }
 
 const VoucherList = () => {
-	const [vouchers, setVouchers] = useState<Voucher[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [vouchers, setVouchers] = useState<Voucher[]>([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
 		// Simulate API call to fetch vouchers
@@ -52,50 +52,46 @@ const VoucherList = () => {
 				setVouchers(MOCK_VOUCHERS);
 				setError(null);
 			} catch (err) {
-				console.error("Error fetching vouchers:", err);
-				setError("Failed to load vouchers. Please try again later.");
+				console.error("Error fetching vouchers:", err)
+				setError("Failed to load vouchers. Please try again later.")
 			} finally {
-				setLoading(false);
+				setLoading(false)
 			}
-		};
+		}
 
-		fetchVouchers();
-	}, []);
+		getVouchersData()
+	}, [])
 
 	// Format date to a readable string
 	const formatDate = (dateString: string): string => {
-		const date = new Date(dateString);
+		const date = new Date(dateString)
 		return new Intl.DateTimeFormat("en-GB", {
 			day: "numeric",
 			month: "short",
 			year: "numeric",
-		}).format(date);
-	};
+		}).format(date)
+	}
 
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center py-12">
-				<div className="animate-pulse text-gray-500">
-					Loading vouchers...
-				</div>
+				<div className="animate-pulse text-gray-500">Loading vouchers...</div>
 			</div>
-		);
+		)
 	}
 
 	if (error) {
 		return (
-			<div className="bg-red-50 border border-red-200 rounded p-4 text-red-700">
-				{error}
-			</div>
-		);
+			<div className="bg-red-50 border border-red-200 rounded-sm p-4 text-red-700">{error}</div>
+		)
 	}
 
 	if (vouchers.length === 0) {
 		return (
-			<div className="bg-gray-50 border border-gray-200 rounded p-6 text-center text-gray-500">
+			<div className="bg-gray-50 border border-gray-200 rounded-sm p-6 text-center text-gray-500">
 				No vouchers available at the moment. Check back soon!
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -103,7 +99,7 @@ const VoucherList = () => {
 			{vouchers.map((voucher) => (
 				<div
 					key={voucher.id}
-					className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+					className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-xs hover:shadow-md transition-shadow"
 				>
 					<div className="relative pb-[56.25%]">
 						{" "}
@@ -116,9 +112,7 @@ const VoucherList = () => {
 					</div>
 
 					<div className="p-4">
-						<h3 className="text-lg font-semibold mb-2">
-							{voucher.title}
-						</h3>
+						<h3 className="text-lg font-semibold mb-2">{voucher.title}</h3>
 
 						<div className="flex items-center text-sm text-gray-500 mb-4">
 							<svg
@@ -135,16 +129,14 @@ const VoucherList = () => {
 									d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 								></path>
 							</svg>
-							<span>
-								Discovered on {formatDate(voucher.discoveredAt)}
-							</span>
+							<span>Discovered on {formatDate(voucher.discoveredAt)}</span>
 						</div>
 
 						<a
 							href={voucher.url}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+							className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors"
 						>
 							View Voucher
 						</a>
@@ -152,7 +144,7 @@ const VoucherList = () => {
 				</div>
 			))}
 		</div>
-	);
-};
+	)
+}
 
-export default VoucherList;
+export default VoucherList

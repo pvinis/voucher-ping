@@ -1,16 +1,16 @@
 {
-    "name": "@voucher-ping/db",
-    "version": "0.1.0",
-    "type": "module",
-    "main": "src/index.ts",
-    "scripts": {
-        "build": "tsc",
-        "start": "bun src/index.ts"
-    },
-    "dependencies": {
-        "lowdb": "^6.1.1"
-    },
-    "devDependencies": {
-        "typescript": "^5.4.2"
-    }
+	"name": "@voucher-ping/db",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"build": "tsc",
+		"start": "bun src/index.ts"
+	},
+	"dependencies": {
+		"lowdb": "^7.0.1"
+	},
+	"devDependencies": {
+		"typescript": "^5.8.2"
+	}
 }

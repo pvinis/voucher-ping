@@ -11,9 +11,10 @@ export type Voucher = {
 };
 
 export type Subscriber = {
-	email: string; // Subscriber's email
-	subscribedAt: string; // When they subscribed
-};
+	id: string
+	email: string
+	subscribedAt: string
+}
 
 export type Schema = {
 	vouchers: Voucher[]; // All discovered vouchers
@@ -25,4 +26,4 @@ export const defaultData: Schema = {
 	vouchers: [],
 	subscribers: [],
 	lastChecked: new Date().toISOString(),
-};
+}

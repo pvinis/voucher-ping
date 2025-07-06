@@ -19,39 +19,6 @@ This is a monorepo with the following packages:
 - `packages/scraper`: Playwright-based scraper that checks websites for new vouchers
 - `packages/web`: React frontend for user subscription
 
-## Tech Stack
-
-- **Bun**: Fast JavaScript runtime and package manager
-- **TypeScript**: Type safety across the codebase
-- **Playwright**: Powerful browser automation for web scraping
-- **React**: Frontend UI library
-- **Tailwind CSS**: Utility-first CSS framework
-- **LowDB**: Simple JSON database
-- **Resend**: Email sending API
-- **GitHub Actions**: Automated scraping workflow
-
-## Setup & Development
-
-### Prerequisites
-
-- Bun installed on your machine
-- A Resend account for email sending (optional for development)
-
-### Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/voucher-ping.git
-cd voucher-ping
-```
-
-2. Install dependencies
-
-```bash
-bun install
-```
-
 3. Set up environment variables
 
 ```bash
@@ -105,6 +72,3 @@ The web UI is a simple React application that allows users to subscribe to email
 1. Edit the components in `packages/web/src/components/`
 2. Modify the styles in `packages/web/src/index.css`
 
-## License
-
-MIT

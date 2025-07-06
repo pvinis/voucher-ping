@@ -1,0 +1,20 @@
+{
+  "vouchers": [
+    {
+      "title": "Το Πρόγραμμα «Τουρισμός για Όλους 2025»...",
+      "url": "https://vouchers.gov.gr/tourism4all-2025",
+      "imageUrl": "https://vouchers.gov.gr/sites/default/files/styles/large/public/images/banners/tourism-2025.png?itok=M8s6fbQl",
+      "id": "952fbf13-4712-47d6-a361-d0468d118239",
+      "discoveredAt": "2025-03-14T16:10:22.184Z"
+    },
+    {
+      "title": "Το Youth Pass αποτελεί μέτρο ενθάρρυνσης...",
+      "url": "https://vouchers.gov.gr/youthpass",
+      "imageUrl": "https://vouchers.gov.gr/sites/default/files/styles/large/public/images/banners/youth_logo.png?itok=txNG0F0E",
+      "id": "177da740-cdb3-4c85-aa24-fc759d819f3f",
+      "discoveredAt": "2025-07-06T10:43:41.994Z"
+    }
+  ],
+  "subscribers": [],
+  "lastChecked": "2025-03-14T16:10:22.185Z"
+}
