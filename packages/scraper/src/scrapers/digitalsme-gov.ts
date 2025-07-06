@@ -12,6 +12,14 @@ export const scraperDigitalsmeGov: Scraper = {
 			await page.goto(url, { waitUntil: "domcontentloaded" })
 			console.log("Page loaded successfully")
 
+			// Scroll to bottom to trigger lazy loading
+			await page.evaluate(() => {
+				window.scrollTo(0, document.body.scrollHeight)
+			})
+			
+			// Wait for images to load
+			await page.waitForTimeout(1000)
+
 			const vouchers = await extractVouchers(page)
 			console.log(`Found ${vouchers.length} vouchers on the page`)
 
@@ -43,8 +51,17 @@ async function extractVouchers(page: Page): Promise<ScrapedVoucher[]> {
 			const imageElement = element.querySelector(".et_pb_image_container img") as any
 			if (!imageElement) return
 
-			const imageUrl = imageElement.src
-			if (!imageUrl) return
+			// Check for lazy loading data attributes first
+			let imageUrl = imageElement.getAttribute('data-src') || 
+						   imageElement.getAttribute('data-lazy') || 
+						   imageElement.getAttribute('data-lazyloaded') || 
+						   imageElement.getAttribute('data-original') ||
+						   imageElement.src
+			
+			if (!imageUrl || imageUrl.startsWith('data:')) {
+				// If still a placeholder, use default digitalsme logo
+				imageUrl = "https://digitalsme.gov.gr/wp-content/uploads/2022/06/digitalsme_logo-400x250.jpg"
+			}
 
 			let title = ""
 

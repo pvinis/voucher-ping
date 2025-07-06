@@ -1,38 +1,22 @@
-import { useState, useEffect } from "react";
+import type { Voucher } from "@voucher-ping/db"
+import { useState, useEffect } from "react"
 
-// Mock data for now - in a real app, this would come from an API
-const MOCK_VOUCHERS = [
-	{
-		id: "1",
-		title: "Digital Skills Voucher",
-		url: "https://vouchers.gov.gr/digital-skills",
-		imageUrl:
-			"https://placehold.co/600x400/4F46E5/FFFFFF?text=Digital+Skills",
-		discoveredAt: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
-	},
-	{
-		id: "2",
-		title: "Green Energy Rebate",
-		url: "https://vouchers.gov.gr/green-energy",
-		imageUrl:
-			"https://placehold.co/600x400/10B981/FFFFFF?text=Green+Energy",
-		discoveredAt: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
-	},
-	{
-		id: "3",
-		title: "Tourism Support Program",
-		url: "https://vouchers.gov.gr/tourism",
-		imageUrl: "https://placehold.co/600x400/F59E0B/FFFFFF?text=Tourism",
-		discoveredAt: new Date(Date.now() - 86400000 * 10).toISOString(), // 10 days ago
-	},
-];
+export async function fetchVouchers(): Promise<Voucher[]> {
+	try {
+		const response = await fetch(
+			"https://raw.githubusercontent.com/pvinis/voucher-ping/main/packages/db/data/db.json",
+		)
 
-interface Voucher {
-	id: string
-	title: string
-	url: string
-	imageUrl: string
-	discoveredAt: string
+		if (!response.ok) {
+			throw new Error(`Failed to fetch vouchers: ${response.status} ${response.statusText}`)
+		}
+
+		const data = await response.json()
+		return data.vouchers || []
+	} catch (error) {
+		console.error("Error fetching vouchers from GitHub:", error)
+		throw error
+	}
 }
 
 const VoucherList = () => {
@@ -41,19 +25,18 @@ const VoucherList = () => {
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		// Simulate API call to fetch vouchers
-		const fetchVouchers = async () => {
+		const getVouchersData = async () => {
 			try {
-				setLoading(true);
+				setLoading(true)
 
-				// In a real app, this would be an API call
-				await new Promise((resolve) => setTimeout(resolve, 800));
-
-				setVouchers(MOCK_VOUCHERS);
-				setError(null);
+				const data = await fetchVouchers()
+				setVouchers(data)
+				setError(null)
 			} catch (err) {
 				console.error("Error fetching vouchers:", err)
-				setError("Failed to load vouchers. Please try again later.")
+				setError(
+					"Failed to load vouchers from GitHub. Please check your internet connection and try again later.",
+				)
 			} finally {
 				setLoading(false)
 			}
