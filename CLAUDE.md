@@ -27,6 +27,7 @@ Voucher Ping is a monorepo system that scrapes Greek government voucher websites
 - `bun --cwd packages/db db:migrate` - Run Prisma migrations and generate client
 - `bun --cwd packages/db prisma migrate dev` - Create and apply new migration
 - `bun --cwd packages/db prisma studio` - Open Prisma Studio for database inspection
+- `cd packages/db && bunx prisma generate` - Generate Prisma client types
 
 ### TypeScript Commands
 - `bunx tsc --noEmit` - Type check all packages without emitting files
@@ -113,15 +114,20 @@ This project uses Bun as the package manager and runtime. All scripts can be run
 - `VoucherToBeAdded` type omits auto-generated fields (id, discoveredAt)
 - Scrapers return `ScrapedVoucher[]` which gets enhanced with sourceId and tags
 
-## Critical Build Issues to Fix
+## Build Process
 
-### Monorepo Structure Fix Required
-The current structure is inconsistent. Web package files are directly in `packages/` instead of `packages/web/`. To fix:
-1. Create `packages/web/` directory
-2. Move web files: `index.html`, `package.json`, `src/`, `tsconfig.json`, `vite.config.ts` to `packages/web/`
-3. Update root package.json build commands to use correct paths
+### Vercel Build Configuration
+The build process automatically:
+1. Generates Prisma client types (`prisma generate`)
+2. Compiles TypeScript (`tsc`)  
+3. Builds web application (`vite build`)
 
-### TypeScript Configuration Issues
-1. **Missing DOM Types**: Scraper packages need DOM types for browser operations
-2. **Import Errors**: Use type-only imports for types: `import type { ScrapedVoucher } from "./shared"`
-3. **Missing Type Annotations**: Add proper typing for DOM elements and event handlers
+### Build Dependencies
+- Web package includes `@prisma/client` and `prisma` as dependencies
+- Build script: `cd ../db && bunx prisma generate && cd ../web && tsc && vite build`
+- Root build script generates Prisma types before building web package
+
+### Important Build Notes
+- Always run `prisma generate` before TypeScript compilation
+- Prisma types must be generated in the db package location
+- All packages import Prisma types from `@voucher-ping/db`, never directly from `@prisma/client`

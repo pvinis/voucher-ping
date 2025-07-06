@@ -4,10 +4,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc && vite build",
+		"build": "cd ../db && bunx prisma generate && cd ../web && tsc && vite build",
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@prisma/client": "^6.11.1",
 		"@voucher-ping/db": "workspace:*",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -19,6 +20,7 @@
 		"@types/react-dom": "^18.3.5",
 		"@types/sql.js": "^1.4.9",
 		"@vitejs/plugin-react": "^4.3.4",
+		"prisma": "^6.11.1",
 		"tailwindcss": "^4.0.14",
 		"typescript": "^5.8.2",
 		"vite": "^6.2.2"
