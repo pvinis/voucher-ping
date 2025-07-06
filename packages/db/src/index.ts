@@ -1,7 +1,8 @@
 import { Low } from "lowdb"
 import { JSONFile } from "lowdb/node"
-import { defaultData } from "./schema.js"
-import type { Schema, Voucher } from "./schema.js"
+import { defaultData } from "./schema"
+import type { Schema, Voucher } from "./schema"
+import { runMigrations } from "./migrations/migrations"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { randomUUID } from "crypto"
@@ -18,6 +19,9 @@ export async function getDatabase(): Promise<Low<Schema>> {
 		const adapter = new JSONFile<Schema>(dbFilePath)
 		db = new Low<Schema>(adapter, defaultData)
 		await db.read()
+
+		// Run migrations
+		await runMigrations(db)
 	}
 	return db
 }

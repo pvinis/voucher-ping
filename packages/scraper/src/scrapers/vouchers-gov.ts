@@ -2,7 +2,7 @@ import type { Page } from "playwright"
 import { ScrapedVoucher, setupBrowser, type Scraper } from "./shared"
 
 export const scraperVouchersGov: Scraper = {
-	async scrape(url: string): Promise<ScrapedVoucher[]> {
+	async scrape(url: string, sourceId: string, tags: string[]): Promise<ScrapedVoucher[]> {
 		console.log(`Starting to scrape ${url}...`)
 
 		const browser = await setupBrowser()
@@ -12,7 +12,7 @@ export const scraperVouchersGov: Scraper = {
 			await page.goto(url, { waitUntil: "domcontentloaded" })
 			console.log("Page loaded successfully")
 
-			const vouchers = await extractVouchers(page)
+			const vouchers = await extractVouchers(page, sourceId, tags)
 			console.log(`Found ${vouchers.length} vouchers on the page`)
 
 			return vouchers
@@ -26,13 +26,13 @@ export const scraperVouchersGov: Scraper = {
 	},
 }
 
-async function extractVouchers(page: Page): Promise<ScrapedVoucher[]> {
+async function extractVouchers(
+	page: Page,
+	sourceId: string,
+	tags: string[],
+): Promise<ScrapedVoucher[]> {
 	return await page.evaluate(() => {
-		const vouchers: Array<{
-			title: string
-			url: string
-			imageUrl: string
-		}> = []
+		const vouchers: Array<ScrapedVoucher> = []
 
 		const voucherElements = document.querySelectorAll(".views-row")
 		console.log(`Found ${voucherElements.length} voucher elements`)
@@ -68,7 +68,7 @@ async function extractVouchers(page: Page): Promise<ScrapedVoucher[]> {
 			}
 
 			console.log(`Found voucher: ${title} - ${url}`)
-			vouchers.push({ title, url, imageUrl })
+			vouchers.push({ title, url, imageUrl, sourceId, tags })
 		})
 
 		return vouchers

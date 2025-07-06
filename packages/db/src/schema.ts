@@ -4,6 +4,8 @@ export type Voucher = {
 	url: string // link to the voucher page
 	imageUrl: string // image URL from the website
 	discoveredAt: string // ISO timestamp when voucher was found
+	sourceId: string // identifier for the source website
+	tags: string[] // tags like `personal`, `work`, etc.
 }
 
 export type Subscriber = {

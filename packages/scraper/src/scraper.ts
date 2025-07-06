@@ -5,17 +5,25 @@ import { scraperDigitalsmeGov } from "./scrapers/digitalsme-gov"
 import type { ScrapedVoucher } from "./scrapers/shared"
 
 const URLS_TO_SCRAPE = {
-	"https://vouchers.gov.gr": scraperVouchersGov,
-	"https://digitalsme.gov.gr/νέα-ανακοινώσεις": scraperDigitalsmeGov,
+	"https://vouchers.gov.gr": {
+		scraper: scraperVouchersGov,
+		sourceId: "vouchers-gov",
+		tags: ["personal"],
+	},
+	"https://digitalsme.gov.gr/νέα-ανακοινώσεις": {
+		scraper: scraperDigitalsmeGov,
+		sourceId: "digitalsme-gov",
+		tags: ["work"],
+	},
 }
 
 export async function scrape(): Promise<Voucher[]> {
 	const allNewVouchers: Voucher[] = []
 
-	for (const [url, scraper] of Object.entries(URLS_TO_SCRAPE)) {
+	for (const [url, config] of Object.entries(URLS_TO_SCRAPE)) {
 		console.log(`\nProcessing URL: ${url}`)
 
-		const scrapedVouchers = await scraper.scrape(url)
+		const scrapedVouchers = await config.scraper.scrape(url, config.sourceId, config.tags)
 		console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
 
 		const newVouchers = await processScrapedVouchers(scrapedVouchers)
