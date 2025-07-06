@@ -9,9 +9,16 @@ datasource db {
 }
 
 model Voucher {
-  id           Int      @id @default(autoincrement()) // unique identifier
+  id           String @id @default(uuid()) // unique identifier
   title        String // voucher title/description
-  url          String   @unique // link to the voucher page
+  url          String @unique // link to the voucher page
   imageUrl     String // image URL from the website
-  discoveredAt DateTime @default(now()) // when the voucher was discovered
+  discoveredAt String // ISO timestamp of when the voucher was discovered
+  sourceId     String // identifier for the source website
+  tags         Json // tags like `personal`, `work` etc
+}
+
+model Metadata {
+  id        String @id @default("singleton") // singleton pattern
+  lastRunAt String // ISO timestamp of last scraper run
 }

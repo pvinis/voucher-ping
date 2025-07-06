@@ -1,62 +1,36 @@
-import { Low } from "lowdb"
-import { JSONFile } from "lowdb/node"
-import { defaultData } from "./schema"
-import type { Schema, Voucher } from "./schema"
-import { runMigrations } from "./migrations"
-import { join, dirname } from "path"
-import { fileURLToPath } from "url"
-import { randomUUID } from "crypto"
+import { PrismaClient } from "../generated/prisma"
+import type { Voucher, Metadata } from "../generated/prisma"
 
-export type { Voucher, Subscriber, Schema } from "./schema.js"
+export type { Voucher, Metadata } from "../generated/prisma"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const dbFilePath = join(__dirname, "..", "data", "db.json")
-
-let db: Low<Schema>
-
-export async function getDatabase(): Promise<Low<Schema>> {
-	if (!db) {
-		const adapter = new JSONFile<Schema>(dbFilePath)
-		db = new Low<Schema>(adapter, defaultData)
-		await db.read()
-
-		// Run migrations
-		await runMigrations(db)
-	}
-	return db
-}
+const prisma = new PrismaClient()
 
 export type VoucherToBeAdded = Omit<Voucher, "id" | "discoveredAt">
 
 export async function addVoucher(voucher: VoucherToBeAdded): Promise<Voucher> {
-	const db = await getDatabase()
+	const existingVoucher = await prisma.voucher.findUnique({
+		where: { url: voucher.url },
+	})
 
-	const existingVoucher = db.data.vouchers.find((v) => v.url === voucher.url)
 	if (existingVoucher) {
 		return existingVoucher
 	}
 
-	const newVoucher: Voucher = {
-		...voucher,
-		id: randomUUID(),
-		discoveredAt: new Date().toISOString(),
-	}
-
-	await db.update(({ vouchers }) => vouchers.push(newVoucher))
-
-	return newVoucher
+	return await prisma.voucher.create({
+		data: {
+			...voucher,
+			discoveredAt: new Date().toISOString(),
+		},
+	})
 }
 
 export async function getVouchers(): Promise<Voucher[]> {
-	const db = await getDatabase()
-	return db.data.vouchers
+	return await prisma.voucher.findMany({
+		orderBy: { discoveredAt: "desc" },
+	})
 }
 
-export async function updateLastChanged(): Promise<void> {
-	await db.update(({ lastChanged }) => (lastChanged = new Date().toISOString()))
-}
-
-export async function getSubscribers(): Promise<any[]> {
-	const db = await getDatabase()
-	return db.data.subscribers || []
+export async function getSubscribers(): Promise<{ email: string }[]> {
+	// TODO: Implement subscribers functionality when User model is added
+	return []
 }
