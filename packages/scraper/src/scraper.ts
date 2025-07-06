@@ -26,7 +26,7 @@ export async function scrape(): Promise<Voucher[]> {
 		const scrapedVouchers = await config.scraper.scrape(url)
 		console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
 
-		const newVouchers = await processScrapedVouchers(scrapedVouchers)
+		const newVouchers = await processScrapedVouchers(scrapedVouchers, config.sourceId, config.tags)
 		console.log(`Found ${newVouchers.length} new vouchers`)
 
 		allNewVouchers.push(...newVouchers)
@@ -37,6 +37,8 @@ export async function scrape(): Promise<Voucher[]> {
 
 export async function processScrapedVouchers(
 	scrapedVouchers: ScrapedVoucher[],
+	sourceId: string,
+	tags: string[],
 ): Promise<Voucher[]> {
 	const existingVouchers = await getVouchers()
 	const existingUrls = new Set(existingVouchers.map((v) => v.url))
@@ -50,7 +52,8 @@ export async function processScrapedVouchers(
 		}
 
 		console.log(`Adding new voucher: ${voucher.title}`)
-		const addedVoucher = await addVoucher(voucher)
+		const fullVoucher: Voucher = { ...voucher, sourceId, tags }
+		const addedVoucher = await addVoucher(fullVoucher)
 		newVouchers.push(addedVoucher)
 	}
 
