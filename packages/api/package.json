@@ -1,18 +1,17 @@
 {
-	"name": "@voucher-ping/scraper",
+	"name": "@voucher-ping/api",
 	"version": "0.1.0",
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "tsc",
+		"dev": "bun --hot src/index.ts",
 		"start": "bun src/index.ts"
 	},
 	"dependencies": {
-		"@voucher-ping/db": "workspace:*",
-		"playwright": "^1.42.1"
+		"@voucher-ping/db": "workspace:*"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.42.1",
+		"@types/bun": "latest",
 		"typescript": "^5.4.2"
 	}
 }

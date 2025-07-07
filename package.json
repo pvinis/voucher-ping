@@ -6,6 +6,7 @@
 	],
 	"scripts": {
 		"dev": "bun run --cwd packages/web dev",
+		"api": "bun run --cwd packages/api dev",
 		"build": "bun run --cwd packages/web build",
 		"scrape": "bun run --cwd packages/scraper start",
 		"format": "prettier --write .",
@@ -16,5 +17,8 @@
 		"@types/node": "24.0.10",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.2"
+	},
+	"dependencies": {
+		"resend": "^4.6.0"
 	}
 }

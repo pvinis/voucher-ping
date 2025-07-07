@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client"
-import type { Voucher, Subscriber, Metadata } from "@prisma/client"
-export type { Voucher, Subscriber, Metadata } from "@prisma/client"
+import type { Voucher, Metadata } from "@prisma/client"
+export type { Voucher, Metadata } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -31,8 +31,10 @@ export async function getVouchers(): Promise<Voucher[]> {
 }
 
 export async function getSubscribers(): Promise<{ email: string }[]> {
-	// TODO: Implement subscribers functionality when User model is added
-	return []
+	const subscribers = await prisma.subscriber.findMany({
+		select: { email: true },
+	})
+	return subscribers
 }
 
 export async function getLastScraperRun(): Promise<Date | null> {

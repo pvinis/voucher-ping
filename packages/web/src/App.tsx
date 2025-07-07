@@ -10,16 +10,25 @@ function App() {
 
 	const handleSubscribe = async (subscribedEmail: string) => {
 		try {
-			// For this demo, we'll just simulate a successful subscription
-			// In a real app, you would call an API endpoint here
 			console.log(`Subscribing email: ${subscribedEmail}`)
-			////
 
-			await new Promise((resolve) => setTimeout(resolve, 500))
+			const response = await fetch('http://localhost:3001/api/subscribe', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email: subscribedEmail }),
+			})
 
-			setSubscribed(true)
-			setEmail(subscribedEmail)
-			setError(null)
+			const data = await response.json() as { success: boolean; message?: string }
+
+			if (data.success) {
+				setSubscribed(true)
+				setEmail(subscribedEmail)
+				setError(null)
+			} else {
+				setError(data.message || "Failed to subscribe. Please try again later.")
+			}
 		} catch (err) {
 			setError("Failed to subscribe. Please try again later.")
 			console.error("Subscription error:", err)
