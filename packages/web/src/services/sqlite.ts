@@ -65,7 +65,6 @@ export async function fetchVouchersFromSQLite(): Promise<Voucher[]> {
 				voucher[column] = row[index]
 			})
 
-			// Parse JSON tags field
 			if (voucher.tags && typeof voucher.tags === "string") {
 				try {
 					voucher.tags = JSON.parse(voucher.tags)

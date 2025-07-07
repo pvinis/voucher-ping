@@ -15,7 +15,6 @@ function App() {
 			console.log(`Subscribing email: ${subscribedEmail}`)
 			////
 
-			// Simulate API call
 			await new Promise((resolve) => setTimeout(resolve, 500))
 
 			setSubscribed(true)
@@ -72,8 +71,8 @@ function App() {
 					<p>© {new Date().getFullYear()} Voucher Ping. All rights reserved.</p>
 					<p className="mt-2">
 						Made by <span className="font-medium">Pavlos Vinieratos</span> • For hire:{" "}
-						<a 
-							href="https://quad.codes" 
+						<a
+							href="https://quad.codes"
 							className="text-indigo-600 hover:text-indigo-800 underline"
 							target="_blank"
 							rel="noopener noreferrer"

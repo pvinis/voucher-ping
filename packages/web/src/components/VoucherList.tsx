@@ -32,7 +32,6 @@ const VoucherList = () => {
 		getVouchersData()
 	}, [])
 
-	// Format date to a readable string
 	const formatDate = (dateString: string): string => {
 		const date = new Date(dateString)
 		return new Intl.DateTimeFormat("en-GB", {

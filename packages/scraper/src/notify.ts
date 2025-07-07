@@ -2,7 +2,6 @@ import { Resend } from "resend"
 import type { Voucher } from "@voucher-ping/db"
 import { getSubscribers } from "@voucher-ping/db"
 
-// Initialize Resend client
 const resendApiKey = process.env.RESEND_API_KEY
 let resend: Resend | null = null
 
@@ -14,11 +13,7 @@ if (resendApiKey) {
 	)
 }
 
-/**
- * Generates HTML email content for voucher notifications
- */
 function generateEmailTemplate(vouchers: Voucher[]): string {
-	// Simple HTML email template
 	return `
     <!DOCTYPE html>
     <html>
@@ -115,9 +110,6 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
     `
 }
 
-/**
- * Sends email notifications to all subscribers about new vouchers
- */
 export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 	if (!resend) {
 		console.warn("Email notifications disabled: No Resend API key")
@@ -129,7 +121,6 @@ export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 		return
 	}
 
-	// Get all subscribers
 	const subscribers = await getSubscribers()
 	if (subscribers.length === 0) {
 		console.log("No subscribers to notify")
@@ -140,10 +131,8 @@ export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 		`Sending notifications to ${subscribers.length} subscribers about ${newVouchers.length} new vouchers`,
 	)
 
-	// Generate email content
 	const html = generateEmailTemplate(newVouchers)
 
-	// Send emails
 	const emailPromises = subscribers.map(async (subscriber) => {
 		try {
 			const { data, error } = await resend!.emails.send({
@@ -171,9 +160,6 @@ export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
 	console.log(`Email notification summary: ${successCount}/${subscribers.length} sent successfully`)
 }
 
-/**
- * For testing: logs notification info without sending emails
- */
 export function mockNotifySubscribers(newVouchers: Voucher[]): void {
 	console.log("MOCK NOTIFICATION")
 	console.log(`Would send notifications about ${newVouchers.length} new vouchers:`)

@@ -19,10 +19,8 @@ const SubscribeForm = ({ onSubscribe, error }: SubscribeFormProps) => {
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault()
 
-		// Clear validation errors
 		setValidationError(null)
 
-		// Validate email
 		if (!email.trim()) {
 			setValidationError("Email is required")
 			return
@@ -33,14 +31,11 @@ const SubscribeForm = ({ onSubscribe, error }: SubscribeFormProps) => {
 			return
 		}
 
-		// Submit the form
 		setIsSubmitting(true)
 		try {
 			await onSubscribe(email)
-			// Reset form on success (if not redirected)
 			setEmail("")
 		} catch (err) {
-			// Error handling is done via props.error in parent component
 			console.error("Error in subscription form:", err)
 		} finally {
 			setIsSubmitting(false)
