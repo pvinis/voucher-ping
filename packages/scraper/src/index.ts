@@ -18,11 +18,11 @@ async function main() {
 
 		if (allNewVouchers.length > 0) {
 			console.log(`Ffffound ${allNewVouchers.length} new vouchers`)
-			if (process.env.RESEND_API_KEY) {
-				// await notifySubscribers(allNewVouchers)
-			} else {
-				// mockNotifySubscribers(allNewVouchers)
-			}
+			// if (process.env.RESEND_API_KEY) {
+			// await notifySubscribers(allNewVouchers)
+			// } else {
+			// mockNotifySubscribers(allNewVouchers)
+			// }
 		} else {
 			console.log("No new vouchers found, skipping notifications")
 		}

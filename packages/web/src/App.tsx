@@ -12,15 +12,15 @@ function App() {
 		try {
 			console.log(`Subscribing email: ${subscribedEmail}`)
 
-			const response = await fetch('http://localhost:3001/api/subscribe', {
-				method: 'POST',
+			const response = await fetch("http://localhost:3001/api/subscribe", {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ email: subscribedEmail }),
 			})
 
-			const data = await response.json() as { success: boolean; message?: string }
+			const data = (await response.json()) as { success: boolean; message?: string }
 
 			if (data.success) {
 				setSubscribed(true)

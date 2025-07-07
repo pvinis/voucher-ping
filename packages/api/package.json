@@ -8,7 +8,10 @@
 		"start": "bun src/index.ts"
 	},
 	"dependencies": {
-		"@voucher-ping/db": "workspace:*"
+		"@voucher-ping/db": "workspace:*",
+		"dotenv": "^17.0.1",
+		"hono": "^4.8.4",
+		"resend": "^4.6.0"
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
