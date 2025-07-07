@@ -1,6 +1,5 @@
 import { Resend } from "resend"
 import type { Voucher } from "@voucher-ping/db"
-import { getSubscribers } from "@voucher-ping/db"
 
 const resendApiKey = process.env.RESEND_API_KEY
 let resend: Resend | null = null
@@ -111,53 +110,36 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
 }
 
 export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
-	if (!resend) {
-		console.warn("Email notifications disabled: No Resend API key")
-		return
-	}
-
-	if (newVouchers.length === 0) {
-		console.log("No new vouchers to notify about")
-		return
-	}
-
-	const subscribers = await getSubscribers()
-	if (subscribers.length === 0) {
-		console.log("No subscribers to notify")
-		return
-	}
-
-	console.log(
-		`Sending notifications to ${subscribers.length} subscribers about ${newVouchers.length} new vouchers`,
-	)
-
-	const html = generateEmailTemplate(newVouchers)
-
-	const emailPromises = subscribers.map(async (subscriber) => {
-		try {
-			const { data, error } = await resend!.emails.send({
-				from: "Voucher Ping <notifications@yourdomain.com>",
-				to: subscriber.email,
-				subject: `${newVouchers.length} New Voucher${newVouchers.length > 1 ? "s" : ""} Available!`,
-				html: html,
-			})
-
-			if (error) {
-				throw error
-			}
-
-			console.log(`Email sent to ${subscriber.email}: ${data?.id}`)
-			return { email: subscriber.email, success: true }
-		} catch (error) {
-			console.error(`Failed to send email to ${subscriber.email}:`, error)
-			return { email: subscriber.email, success: false, error }
-		}
-	})
-
-	const results = await Promise.all(emailPromises)
-	const successCount = results.filter((r) => r.success).length
-
-	console.log(`Email notification summary: ${successCount}/${subscribers.length} sent successfully`)
+	// if (!resend) {
+	// 	console.warn("Email notifications disabled: No Resend API key")
+	// 	return
+	// }
+	// if (newVouchers.length === 0) {
+	// 	console.log("No new vouchers to notify about")
+	// 	return
+	// }
+	// const html = generateEmailTemplate(newVouchers)
+	// const emailPromises = subscribers.map(async (subscriber) => {
+	// 	try {
+	// 		const { data, error } = await resend!.emails.send({
+	// 			from: "Voucher Ping <notifications@yourdomain.com>",
+	// 			to: subscriber.email,
+	// 			subject: `${newVouchers.length} New Voucher${newVouchers.length > 1 ? "s" : ""} Available!`,
+	// 			html: html,
+	// 		})
+	// 		if (error) {
+	// 			throw error
+	// 		}
+	// 		console.log(`Email sent to ${subscriber.email}: ${data?.id}`)
+	// 		return { email: subscriber.email, success: true }
+	// 	} catch (error) {
+	// 		console.error(`Failed to send email to ${subscriber.email}:`, error)
+	// 		return { email: subscriber.email, success: false, error }
+	// 	}
+	// })
+	// const results = await Promise.all(emailPromises)
+	// const successCount = results.filter((r) => r.success).length
+	// console.log(`Email notification summary: ${successCount}/${subscribers.length} sent successfully`)
 }
 
 export function mockNotifySubscribers(newVouchers: Voucher[]): void {

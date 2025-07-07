@@ -30,13 +30,6 @@ export async function getVouchers(): Promise<Voucher[]> {
 	})
 }
 
-export async function getSubscribers(): Promise<{ email: string }[]> {
-	const subscribers = await prisma.subscriber.findMany({
-		select: { email: true },
-	})
-	return subscribers
-}
-
 export async function getLastScraperRun(): Promise<Date | null> {
 	const metadata = await prisma.metadata.findFirst()
 	return metadata ? new Date(metadata.lastRunAt) : null
