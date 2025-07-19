@@ -13,7 +13,7 @@
 		"db:migrate": "bun --cwd packages/db db:migrate"
 	},
 	"devDependencies": {
-		"@types/bun": "1.2.18",
+		"@types/bun": "1.2.19",
 		"@types/node": "24.0.15",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.2"
