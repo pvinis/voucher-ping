@@ -13,7 +13,8 @@
 	"scripts": {
 		"build": "tsc",
 		"start": "bun src/index.ts",
-		"db:migrate": "prisma migrate dev && prisma generate"
+		"db:migrate": "prisma migrate dev && prisma generate",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@prisma/client": "^6.11.1"

@@ -6,22 +6,23 @@
 		"dev": "vite",
 		"prebuild": "cd ../db && bun x prisma generate",
 		"build": "tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@voucher-ping/db": "workspace:*",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
+		"react": "19",
+		"react-dom": "19",
 		"sql.js": "^1.13.0"
 	},
 	"devDependencies": {
-		"@tailwindcss/vite": "4.1.18",
-		"@types/react": "^18.3.18",
-		"@types/react-dom": "^18.3.5",
+		"@tailwindcss/vite": "4.3.3",
+		"@types/react": "19",
+		"@types/react-dom": "19",
 		"@types/sql.js": "^1.4.9",
-		"@vitejs/plugin-react": "^4.3.4",
-		"tailwindcss": "^4.0.14",
+		"@vitejs/plugin-react": "6",
+		"tailwindcss": "4.3.3",
 		"typescript": "^5.8.2",
-		"vite": "^6.2.2"
+		"vite": "8"
 	}
 }

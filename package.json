@@ -1,6 +1,7 @@
 {
 	"name": "voucher-ping",
 	"type": "module",
+	"private": true,
 	"workspaces": [
 		"packages/*"
 	],
@@ -10,11 +11,14 @@
 		"build": "bun run --cwd packages/web build",
 		"scrape": "bun run --cwd packages/scraper start",
 		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"typecheck": "bun run --cwd packages/db typecheck && bun run --cwd packages/scraper typecheck && bun run --cwd packages/web typecheck && bun run --cwd packages/api typecheck",
+		"db:generate": "bun --cwd packages/db prisma generate",
 		"db:migrate": "bun --cwd packages/db db:migrate"
 	},
 	"devDependencies": {
-		"@types/bun": "1.2.23",
-		"@types/node": "24.0.15",
+		"@types/bun": "1.3.14",
+		"@types/node": "24.13.3",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.2"
 	}
