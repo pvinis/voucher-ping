@@ -17,24 +17,47 @@ const URLS_TO_SCRAPE = {
 	},
 }
 
-export async function scrape(): Promise<Voucher[]> {
-	const allNewVouchers: Voucher[] = []
+export type ScrapeResult = {
+	newVouchers: Voucher[]
+	/** Sources that threw. Non-empty means the run must be treated as failed. */
+	failures: { url: string; error: unknown }[]
+	/** Sources that loaded but matched no elements — usually a changed layout. */
+	emptySources: string[]
+}
+
+export async function scrape(): Promise<ScrapeResult> {
+	const newVouchers: Voucher[] = []
+	const failures: ScrapeResult["failures"] = []
+	const emptySources: string[] = []
 
 	for (const [url, config] of Object.entries(URLS_TO_SCRAPE)) {
 		console.log(`\nProcessing URL: ${url}`)
 
-		const scrapedVouchers = await config.scraper.scrape(url)
-		console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
+		// One bad source must not hide results from the others, but it must still
+		// fail the run — a silently empty scrape is indistinguishable from
+		// "no new vouchers today".
+		try {
+			const scrapedVouchers = await config.scraper.scrape(url)
+			console.log(`Found ${scrapedVouchers.length} total vouchers on the site`)
 
-		const newVouchers = await processScrapedVouchers(scrapedVouchers, config.sourceId, config.tags)
-		console.log(`Found ${newVouchers.length} new vouchers`)
+			if (scrapedVouchers.length === 0) {
+				console.warn(`No vouchers matched on ${url} — the page layout may have changed`)
+				emptySources.push(url)
+			}
 
-		allNewVouchers.push(...newVouchers)
+			const added = await processScrapedVouchers(scrapedVouchers, config.sourceId, config.tags)
+			console.log(`Found ${added.length} new vouchers`)
+
+			newVouchers.push(...added)
+		} catch (error) {
+			console.error(`Failed to scrape ${url}:`, error)
+			failures.push({ url, error })
+		}
 	}
 
 	await updateLastScraperRun()
 
-	return allNewVouchers
+	return { newVouchers, failures, emptySources }
 }
 
 export async function processScrapedVouchers(

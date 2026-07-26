@@ -1,5 +1,5 @@
 import type { Page } from "playwright"
-import { ScrapedVoucher, setupBrowser, type Scraper } from "./shared"
+import { gotoOrThrow, setupBrowser, type ScrapedVoucher, type Scraper } from "./shared"
 
 export const scraperVouchersGov: Scraper = {
 	async scrape(url: string): Promise<ScrapedVoucher[]> {
@@ -9,16 +9,12 @@ export const scraperVouchersGov: Scraper = {
 		const page = await browser.newPage()
 
 		try {
-			await page.goto(url, { waitUntil: "domcontentloaded" })
-			console.log("Page loaded successfully")
+			await gotoOrThrow(page, url)
 
 			const vouchers = await extractVouchers(page)
 			console.log(`Found ${vouchers.length} vouchers on the page`)
 
 			return vouchers
-		} catch (error) {
-			console.error("Error during scraping:", error)
-			return []
 		} finally {
 			await browser.close()
 			console.log("Browser closed")

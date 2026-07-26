@@ -3,6 +3,10 @@ import SubscribeForm from "./components/SubscribeForm"
 import VoucherList from "./components/VoucherList"
 import LastChecked from "./components/LastChecked"
 
+// Set VITE_API_URL at build time to point at the deployed API package.
+// Falls back to the local `bun api` server for development.
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001"
+
 function App() {
 	const [subscribed, setSubscribed] = useState(false)
 	const [email, setEmail] = useState("")
@@ -12,7 +16,7 @@ function App() {
 		try {
 			console.log(`Subscribing email: ${subscribedEmail}`)
 
-			const response = await fetch("http://localhost:3001/api/subscribe", {
+			const response = await fetch(`${API_BASE_URL}/api/subscribe`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

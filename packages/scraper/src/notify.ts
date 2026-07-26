@@ -1,5 +1,6 @@
 import { Resend } from "resend"
 import type { Voucher } from "@voucher-ping/db"
+import { RESEND_AUDIENCE_ID, RESEND_FROM_EMAIL, SITE_URL } from "./config"
 
 const resendApiKey = process.env.RESEND_API_KEY
 let resend: Resend | null = null
@@ -10,6 +11,15 @@ if (resendApiKey) {
 	console.warn(
 		"RESEND_API_KEY not found in environment variables. Email notifications will be disabled.",
 	)
+}
+
+function escapeHtml(value: string): string {
+	return value
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;")
 }
 
 function generateEmailTemplate(vouchers: Voucher[]): string {
@@ -90,56 +100,63 @@ function generateEmailTemplate(vouchers: Voucher[]): string {
 							.map(
 								(voucher) => `
                 <div class="voucher">
-                    <img src="${voucher.imageUrl}" alt="${voucher.title}">
-                    <div class="voucher-title">${voucher.title}</div>
-                    <a href="${voucher.url}" class="voucher-link">View Voucher</a>
+                    <img src="${escapeHtml(voucher.imageUrl)}" alt="${escapeHtml(voucher.title)}">
+                    <div class="voucher-title">${escapeHtml(voucher.title)}</div>
+                    <a href="${escapeHtml(voucher.url)}" class="voucher-link">View Voucher</a>
                 </div>
             `,
 							)
 							.join("")}
 
             <p>Don't miss out on these opportunities!</p>
+            <p><a href="${escapeHtml(SITE_URL)}">See all vouchers on Voucher Ping</a></p>
         </div>
         <div class="footer">
             <p>You're receiving this email because you subscribed to voucher notifications.
-            <a href="{{unsubscribe_url}}" class="unsubscribe">Unsubscribe</a></p>
+            <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" class="unsubscribe">Unsubscribe</a></p>
         </div>
     </body>
     </html>
     `
 }
 
+/**
+ * Sends one broadcast to the Resend audience. Subscribers are not stored in our
+ * database (the `Subscriber` table was dropped in the `remove_emails`
+ * migration), so we never hold a recipient list ourselves — Resend owns the
+ * audience and injects the per-recipient unsubscribe URL.
+ */
 export async function notifySubscribers(newVouchers: Voucher[]): Promise<void> {
-	// if (!resend) {
-	// 	console.warn("Email notifications disabled: No Resend API key")
-	// 	return
-	// }
-	// if (newVouchers.length === 0) {
-	// 	console.log("No new vouchers to notify about")
-	// 	return
-	// }
-	// const html = generateEmailTemplate(newVouchers)
-	// const emailPromises = subscribers.map(async (subscriber) => {
-	// 	try {
-	// 		const { data, error } = await resend!.emails.send({
-	// 			from: "Voucher Ping <notifications@yourdomain.com>",
-	// 			to: subscriber.email,
-	// 			subject: `${newVouchers.length} New Voucher${newVouchers.length > 1 ? "s" : ""} Available!`,
-	// 			html: html,
-	// 		})
-	// 		if (error) {
-	// 			throw error
-	// 		}
-	// 		console.log(`Email sent to ${subscriber.email}: ${data?.id}`)
-	// 		return { email: subscriber.email, success: true }
-	// 	} catch (error) {
-	// 		console.error(`Failed to send email to ${subscriber.email}:`, error)
-	// 		return { email: subscriber.email, success: false, error }
-	// 	}
-	// })
-	// const results = await Promise.all(emailPromises)
-	// const successCount = results.filter((r) => r.success).length
-	// console.log(`Email notification summary: ${successCount}/${subscribers.length} sent successfully`)
+	if (!resend) {
+		console.warn("Email notifications disabled: No Resend API key")
+		return
+	}
+
+	if (newVouchers.length === 0) {
+		console.log("No new vouchers to notify about")
+		return
+	}
+
+	const subject = `${newVouchers.length} New Voucher${newVouchers.length > 1 ? "s" : ""} Available!`
+
+	const { data: broadcast, error: createError } = await resend.broadcasts.create({
+		audienceId: RESEND_AUDIENCE_ID,
+		from: RESEND_FROM_EMAIL,
+		subject,
+		html: generateEmailTemplate(newVouchers),
+	})
+
+	if (createError || !broadcast) {
+		throw new Error(`Failed to create broadcast: ${JSON.stringify(createError)}`)
+	}
+
+	const { error: sendError } = await resend.broadcasts.send(broadcast.id)
+
+	if (sendError) {
+		throw new Error(`Failed to send broadcast ${broadcast.id}: ${JSON.stringify(sendError)}`)
+	}
+
+	console.log(`Broadcast ${broadcast.id} sent to audience ${RESEND_AUDIENCE_ID}: "${subject}"`)
 }
 
 export function mockNotifySubscribers(newVouchers: Voucher[]): void {

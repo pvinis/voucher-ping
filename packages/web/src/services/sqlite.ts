@@ -1,4 +1,7 @@
 import initSqlJs from "sql.js"
+// Bundled with the app rather than pulled from the sql.js CDN at runtime, so
+// the site does not depend on a third-party host being up.
+import sqlWasmUrl from "sql.js/dist/sql-wasm.wasm?url"
 import type { Voucher } from "@voucher-ping/db"
 
 let SQL: any = null
@@ -8,7 +11,7 @@ let dbPromise: Promise<any> | null = null
 async function initSQL() {
 	if (!SQL) {
 		SQL = await initSqlJs({
-			locateFile: (file: string) => `https://sql.js.org/dist/${file}`,
+			locateFile: () => sqlWasmUrl,
 		})
 	}
 	return SQL
